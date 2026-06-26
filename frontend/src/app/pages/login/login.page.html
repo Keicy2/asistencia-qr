@@ -1,0 +1,46 @@
+<div class="login-wrapper">
+  <div class="login-card">
+    <div class="login-brand">
+      <div class="brand-icon">
+        <ion-icon name="qr-code-outline"></ion-icon>
+      </div>
+      <h1>Asistencia QR</h1>
+      <p class="brand-subtitle">Sistema de control de asistencia</p>
+    </div>
+
+    <div class="login-divider"></div>
+
+    <div class="login-form">
+      <div class="input-group">
+        <label class="input-label">Correo electrónico</label>
+        <div class="input-field">
+          <ion-icon name="mail-outline" class="input-icon"></ion-icon>
+          <input type="email" [(ngModel)]="correo" placeholder="admin@sigaa.com" class="input-control" />
+        </div>
+      </div>
+
+      <div class="input-group">
+        <label class="input-label">Contraseña</label>
+        <div class="input-field">
+          <ion-icon name="lock-closed-outline" class="input-icon"></ion-icon>
+          <input type="password" [(ngModel)]="password" placeholder="••••••••" class="input-control" />
+        </div>
+      </div>
+
+      <div *ngIf="error" class="error-message">
+        <ion-icon name="alert-circle-outline"></ion-icon>
+        <span>{{ error }}</span>
+      </div>
+
+      <button class="login-button" (click)="login()" [disabled]="loading">
+        <span *ngIf="!loading">Iniciar sesión</span>
+        <span *ngIf="loading" class="loading-content">
+          <ion-spinner name="crescent" color="light"></ion-spinner>
+          Iniciando sesión...
+        </span>
+      </button>
+    </div>
+
+    <p class="login-footer">Sistema interno — Acceso autorizado</p>
+  </div>
+</div>

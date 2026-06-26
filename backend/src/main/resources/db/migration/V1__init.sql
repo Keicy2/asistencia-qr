@@ -1,0 +1,59 @@
+CREATE TABLE usuarios (
+    id BIGSERIAL PRIMARY KEY,
+    nombre VARCHAR(150) NOT NULL,
+    correo VARCHAR(150) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    activo BOOLEAN NOT NULL DEFAULT TRUE,
+    bloqueado BOOLEAN NOT NULL DEFAULT FALSE,
+    creado_en TIMESTAMP NOT NULL DEFAULT NOW(),
+    ultimo_acceso TIMESTAMP
+);
+
+CREATE TABLE sedes (
+    id BIGSERIAL PRIMARY KEY,
+    nombre VARCHAR(200) NOT NULL,
+    direccion VARCHAR(300),
+    latitud DOUBLE PRECISION NOT NULL,
+    longitud DOUBLE PRECISION NOT NULL,
+    geocerca_metros DOUBLE PRECISION NOT NULL DEFAULT 100,
+    activa BOOLEAN NOT NULL DEFAULT TRUE,
+    creado_en TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE TABLE qr_sesiones (
+    id BIGSERIAL PRIMARY KEY,
+    sede_id BIGINT NOT NULL REFERENCES sedes(id),
+    codigo VARCHAR(100) NOT NULL UNIQUE,
+    fecha DATE NOT NULL,
+    hora_entrada TIME NOT NULL,
+    expira_en TIMESTAMP NOT NULL,
+    activa BOOLEAN NOT NULL DEFAULT TRUE,
+    creado_en TIMESTAMP NOT NULL DEFAULT NOW(),
+    creado_por BIGINT NOT NULL REFERENCES usuarios(id)
+);
+
+CREATE TABLE asistencia_registros (
+    id BIGSERIAL PRIMARY KEY,
+    sesion_id BIGINT NOT NULL REFERENCES qr_sesiones(id),
+    nombre VARCHAR(200) NOT NULL,
+    correo VARCHAR(200),
+    telefono VARCHAR(50),
+    institucion VARCHAR(300),
+    cargo VARCHAR(200),
+    latitud DOUBLE PRECISION,
+    longitud DOUBLE PRECISION,
+    metodo VARCHAR(20) NOT NULL DEFAULT 'qr',
+    registrado_en TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_qr_sesiones_codigo ON qr_sesiones(codigo);
+CREATE INDEX idx_asistencia_sesion ON asistencia_registros(sesion_id);
+
+INSERT INTO usuarios (nombre, correo, password, activo)
+VALUES ('Admin', 'admin@sigaa.com', '$2a$10$35HffJseO6rogipo832cuu9P3XrW44AUm7UReBNdbO6JRL4jaSbqe', TRUE);
+
+INSERT INTO sedes (nombre, direccion, latitud, longitud, geocerca_metros)
+VALUES ('Edificio Principal', 'Av. Principal 123', -12.0464, -77.0428, 100);
+
+INSERT INTO sedes (nombre, direccion, latitud, longitud, geocerca_metros)
+VALUES ('Biblioteca Central', 'Calle Los Libros 456', -12.0500, -77.0400, 100);

@@ -1,0 +1,32 @@
+package com.asistenciaqr.dto;
+
+import jakarta.validation.constraints.NotBlank;
+
+public class UsuarioRequest {
+
+    @NotBlank
+    private String nombre;
+
+    @NotBlank
+    private String correo;
+
+    @NotBlank
+    private String password;
+
+    private String horaEntrada;
+    private String horaSalida;
+    private String estado;
+
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
+    public String getCorreo() { return correo; }
+    public void setCorreo(String correo) { this.correo = correo; }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+    public String getHoraEntrada() { return horaEntrada; }
+    public void setHoraEntrada(String horaEntrada) { this.horaEntrada = horaEntrada; }
+    public String getHoraSalida() { return horaSalida; }
+    public void setHoraSalida(String horaSalida) { this.horaSalida = horaSalida; }
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
+}

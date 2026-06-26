@@ -1,0 +1,73 @@
+<div class="publica-container">
+  <div class="publica-card">
+    <div *ngIf="loading" class="center">
+      <ion-spinner name="crescent"></ion-spinner>
+      <p>Cargando sesión...</p>
+    </div>
+
+    <div *ngIf="error && !loading" class="center">
+      <ion-icon name="close-circle-outline" class="icon-error"></ion-icon>
+      <h2>{{ error }}</h2>
+    </div>
+
+    <div *ngIf="registrado" class="center">
+      <ion-icon name="checkmark-circle-outline" class="icon-success"></ion-icon>
+      <h2>{{ successMsg }}</h2>
+    </div>
+
+    <div *ngIf="sesion && !loading && !registrado">
+      <div class="header">
+        <h1>Registro de Asistencia</h1>
+        <p class="sede-name">{{ sesion.sedeNombre }}</p>
+        <p class="sesion-info">{{ sesion.fecha | date:'dd/MM/yyyy' }}</p>
+      </div>
+
+      <div class="gps-status">
+        <div *ngIf="gpsStatus === 'solicitando'" class="status solicitud">
+          <ion-spinner name="dots"></ion-spinner>
+          <span>Solicitando ubicación GPS...</span>
+        </div>
+        <div *ngIf="gpsStatus === 'validando'" class="status validando">
+          <ion-spinner name="dots"></ion-spinner>
+          <span>Validando ubicación...</span>
+        </div>
+        <div *ngIf="gpsStatus === 'dentro'" class="status dentro">
+          <ion-icon name="checkmark-circle"></ion-icon>
+          <span>Ubicación verificada ({{ distanciaMetros.toFixed(0) }}m de distancia)</span>
+        </div>
+        <div *ngIf="gpsStatus === 'fuera'" class="status fuera">
+          <ion-icon name="warning"></ion-icon>
+          <span>Debe estar en {{ sesion.sedeNombre }} para registrarse ({{ distanciaMetros.toFixed(0) }}m)</span>
+        </div>
+        <div *ngIf="gpsStatus === 'denegado'" class="status denegado">
+          <ion-icon name="location-outline"></ion-icon>
+          <span>Permiso de ubicación denegado. Ingrese sus credenciales manualmente.</span>
+        </div>
+        <div *ngIf="gpsStatus === 'no_disponible'" class="status denegado">
+          <ion-icon name="location-outline"></ion-icon>
+          <span>GPS no disponible. Ingrese sus credenciales manualmente.</span>
+        </div>
+      </div>
+
+      <div *ngIf="gpsStatus === 'fuera'" class="fuera-section">
+        <p>No puede registrarse porque no se encuentra dentro del área permitida.</p>
+        <ion-button fill="outline" size="small" (click)="reintentarGps()">Reintentar GPS</ion-button>
+      </div>
+
+      <div class="form" *ngIf="gpsStatus === 'dentro' || gpsStatus === 'denegado' || gpsStatus === 'no_disponible'">
+        <div class="form-group">
+          <input type="email" [(ngModel)]="correo" placeholder="Correo electrónico" class="form-control" />
+        </div>
+        <div class="form-group">
+          <input type="password" [(ngModel)]="password" placeholder="Contraseña" class="form-control" />
+        </div>
+
+        <div *ngIf="error" class="error-msg">{{ error }}</div>
+
+        <ion-button expand="block" (click)="registrar()" [disabled]="registrando || !correo || !password">
+          {{ registrando ? 'Registrando...' : 'Confirmar asistencia' }}
+        </ion-button>
+      </div>
+    </div>
+  </div>
+</div>

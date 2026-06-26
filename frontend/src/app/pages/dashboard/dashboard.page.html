@@ -1,0 +1,113 @@
+<div class="sidebar-layout">
+  <app-sidebar></app-sidebar>
+  <div class="sidebar-content">
+    <app-topbar [title]="'Panel de Administración'" [userName]="userName"></app-topbar>
+    <div class="page-content">
+      <div *ngIf="error" class="alert alert-error">{{ error }}</div>
+      <div *ngIf="success" class="alert alert-success">{{ success }}</div>
+
+      <div class="grid-2">
+        <div class="card">
+          <h3>Generar Código QR</h3>
+          <div class="form-group">
+            <label>Sede</label>
+            <select [(ngModel)]="selectedSedeId" class="form-control">
+              <option *ngFor="let sede of sedes" [value]="sede.id">{{ sede.nombre }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Fecha</label>
+            <input type="date" [(ngModel)]="fecha" class="form-control" />
+          </div>
+          <ion-button expand="block" (click)="generarQr()" [disabled]="loading">
+            {{ loading ? 'Generando...' : 'Generar QR' }}
+          </ion-button>
+
+          <div *ngIf="showQr && qrData" class="qr-display">
+            <qrcode [qrdata]="qrData" [width]="200" errorCorrectionLevel="M"></qrcode>
+            <p class="qr-url">{{ qrData }}</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3>Sesiones Generadas</h3>
+          <div class="sesion-list" *ngIf="sesiones.length > 0">
+            <div class="sesion-item" *ngFor="let s of sesiones"
+                 [class.selected]="selectedSesion?.id === s.id"
+                 (click)="selectSesion(s)">
+              <div class="sesion-info">
+                <strong>{{ s.sedeNombre }}</strong>
+                <span>{{ s.fecha | date:'dd/MM/yyyy' }}</span>
+              </div>
+              <div class="sesion-stats">
+                <span class="badge" [class.activa]="s.activa" [class.inactiva]="!s.activa">
+                  {{ s.activa ? 'Activa' : 'Expirada' }}
+                </span>
+                <span class="count">{{ s.totalRegistros }} registros</span>
+                <ion-button size="small" fill="clear" color="danger" (click)="eliminarSesion($event, s)" [disabled]="deleting">
+                  <ion-icon name="trash-outline"></ion-icon>
+                </ion-button>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="sesiones.length === 0" class="empty-state">
+            No hay sesiones generadas
+          </div>
+        </div>
+      </div>
+
+      <div class="card" *ngIf="selectedSesion">
+        <div class="card-header">
+          <h3>Registros - {{ selectedSesion.sedeNombre }} ({{ selectedSesion.fecha | date:'dd/MM/yyyy' }})</h3>
+          <div class="card-actions">
+            <ion-button size="small" fill="outline" (click)="showManual = !showManual">
+              {{ showManual ? 'Cancelar' : '+ Agregar manual' }}
+            </ion-button>
+            <ion-button size="small" fill="outline" (click)="descargarCsv()">
+              Descargar CSV
+            </ion-button>
+          </div>
+        </div>
+
+        <div *ngIf="showManual" class="manual-form">
+          <div class="form-group">
+            <label>Usuario</label>
+            <select [(ngModel)]="manualUsuarioId" class="form-control">
+              <option [value]="null" disabled>Seleccione un usuario</option>
+              <option *ngFor="let u of usuarios" [value]="u.id">{{ u.nombre }} ({{ u.correo }})</option>
+            </select>
+          </div>
+          <ion-button size="small" (click)="agregarManual()">Guardar</ion-button>
+        </div>
+
+        <table class="table" *ngIf="registros.length > 0">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Usuario</th>
+              <th>Correo</th>
+              <th>Hora Prog.</th>
+              <th>Estado</th>
+              <th>Método</th>
+              <th>Registrado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let r of registros; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>{{ r.usuarioNombre }}</td>
+              <td>{{ r.usuarioCorreo }}</td>
+              <td>{{ r.horaProgramada || '-' }}</td>
+              <td><span class="badge estado" [ngClass]="r.estado">{{ r.estado || '-' }}</span></td>
+              <td><span class="badge" [class.qr]="r.metodo === 'qr'" [class.manual]="r.metodo === 'manual'">{{ r.metodo }}</span></td>
+              <td>{{ r.registradoEn | date:'dd/MM/yyyy HH:mm' }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div *ngIf="registros.length === 0" class="empty-state">
+          No hay registros para esta sesión
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
