@@ -2,6 +2,8 @@ export interface Usuario {
   id: number;
   nombre: string;
   correo: string;
+  cargo: string | null;
+  institucion: string | null;
   horaEntrada: string | null;
   horaSalida: string | null;
   estado: string;
@@ -76,6 +78,8 @@ export interface UsuarioPayload {
   nombre: string;
   correo: string;
   password: string;
+  cargo?: string;
+  institucion?: string;
   horaEntrada?: string;
   horaSalida?: string;
   estado?: string;

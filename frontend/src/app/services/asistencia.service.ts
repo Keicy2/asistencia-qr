@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ApiService } from './api.service';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
@@ -7,7 +8,7 @@ import { Sede, QrSesion, AsistenciaRegistro, RegistroPayload, ManualRegistroPayl
 @Injectable({ providedIn: 'root' })
 export class AsistenciaService {
 
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService, private http: HttpClient) {}
 
   getSedes(): Observable<Sede[]> {
     return this.api.get<Sede[]>('/api/sedes');
@@ -42,10 +43,16 @@ export class AsistenciaService {
     return this.api.post<AsistenciaRegistro>('/api/asistencia/manual', data);
   }
 
-  exportarCsv(sesionId?: number): string {
+  exportarCsv(sesionId?: number): Observable<Blob> {
     const token = localStorage.getItem('token');
-    const params = sesionId ? `?sesionId=${sesionId}` : '';
-    return `${environment.apiUrl}/api/asistencia/exportar${params}&token=${token}`;
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    const params: any = {};
+    if (sesionId) params.sesionId = sesionId;
+    return this.http.get(`${environment.apiUrl}/api/asistencia/exportar`, {
+      headers,
+      params,
+      responseType: 'blob'
+    });
   }
 
   getServerInfo(): Observable<{ localIp: string }> {

@@ -11,6 +11,13 @@ import { AsistenciaService } from '../../services/asistencia.service';
 import { AuthService } from '../../services/auth.service';
 import { Usuario } from '../../models/asistencia.models';
 
+const INSTITUCIONES = [
+  'Servicio Nacional de Migración',
+  'SENAFRONT',
+  'SENAN',
+  'Policía Nacional'
+];
+
 @Component({
   selector: 'app-asistencia',
   standalone: true,
@@ -49,12 +56,15 @@ import { Usuario } from '../../models/asistencia.models';
               </div>
               <div class="form-row">
                 <div class="form-group">
-                  <label>Hora entrada</label>
-                  <input type="time" [(ngModel)]="formHoraEntrada" class="form-control" />
+                  <label>Cargo</label>
+                  <input type="text" [(ngModel)]="formCargo" class="form-control" />
                 </div>
                 <div class="form-group">
-                  <label>Hora salida</label>
-                  <input type="time" [(ngModel)]="formHoraSalida" class="form-control" />
+                  <label>Institución</label>
+                  <select [(ngModel)]="formInstitucion" class="form-control">
+                    <option value="">-- Seleccione --</option>
+                    <option *ngFor="let i of instituciones" [value]="i">{{ i }}</option>
+                  </select>
                 </div>
                 <div class="form-group">
                   <label>Estado</label>
@@ -64,6 +74,16 @@ import { Usuario } from '../../models/asistencia.models';
                     <option value="vacaciones">Vacaciones</option>
                     <option value="permiso">Permiso</option>
                   </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Hora entrada</label>
+                  <input type="time" [(ngModel)]="formHoraEntrada" class="form-control" />
+                </div>
+                <div class="form-group">
+                  <label>Hora salida</label>
+                  <input type="time" [(ngModel)]="formHoraSalida" class="form-control" />
                 </div>
               </div>
               <ion-button size="small" (click)="crearUsuario()" [disabled]="saving">
@@ -77,6 +97,8 @@ import { Usuario } from '../../models/asistencia.models';
                   <th>#</th>
                   <th>Nombre</th>
                   <th>Correo</th>
+                  <th>Cargo</th>
+                  <th>Institución</th>
                   <th>Hora entrada</th>
                   <th>Hora salida</th>
                   <th>Estado</th>
@@ -88,6 +110,8 @@ import { Usuario } from '../../models/asistencia.models';
                   <td>{{ i + 1 }}</td>
                   <td>{{ u.nombre }}</td>
                   <td>{{ u.correo }}</td>
+                  <td>{{ u.cargo || '-' }}</td>
+                  <td>{{ u.institucion || '-' }}</td>
                   <td>{{ u.horaEntrada || '-' }}</td>
                   <td>{{ u.horaSalida || '-' }}</td>
                   <td>
@@ -124,12 +148,15 @@ import { Usuario } from '../../models/asistencia.models';
             </div>
             <div class="form-row">
               <div class="form-group">
-                <label>Hora entrada</label>
-                <input type="time" [(ngModel)]="editHoraEntrada" class="form-control" />
+                <label>Cargo</label>
+                <input type="text" [(ngModel)]="editCargo" class="form-control" />
               </div>
               <div class="form-group">
-                <label>Hora salida</label>
-                <input type="time" [(ngModel)]="editHoraSalida" class="form-control" />
+                <label>Institución</label>
+                <select [(ngModel)]="editInstitucion" class="form-control">
+                  <option value="">-- Seleccione --</option>
+                  <option *ngFor="let i of instituciones" [value]="i">{{ i }}</option>
+                </select>
               </div>
               <div class="form-group">
                 <label>Estado</label>
@@ -139,6 +166,16 @@ import { Usuario } from '../../models/asistencia.models';
                   <option value="vacaciones">Vacaciones</option>
                   <option value="permiso">Permiso</option>
                 </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Hora entrada</label>
+                <input type="time" [(ngModel)]="editHoraEntrada" class="form-control" />
+              </div>
+              <div class="form-group">
+                <label>Hora salida</label>
+                <input type="time" [(ngModel)]="editHoraSalida" class="form-control" />
               </div>
             </div>
             <div class="edit-actions">
@@ -181,11 +218,14 @@ import { Usuario } from '../../models/asistencia.models';
   `]
 })
 export class AsistenciaPage implements OnInit {
+  instituciones = INSTITUCIONES;
   usuarios: Usuario[] = [];
   showForm = false;
   formNombre = '';
   formCorreo = '';
   formPassword = '';
+  formCargo = '';
+  formInstitucion = '';
   formHoraEntrada = '';
   formHoraSalida = '';
   formEstado = 'activo';
@@ -198,6 +238,8 @@ export class AsistenciaPage implements OnInit {
   editNombre = '';
   editCorreo = '';
   editPassword = '';
+  editCargo = '';
+  editInstitucion = '';
   editHoraEntrada = '';
   editHoraSalida = '';
   editEstado = 'activo';
@@ -242,6 +284,8 @@ export class AsistenciaPage implements OnInit {
       nombre: this.formNombre,
       correo: this.formCorreo,
       password: this.formPassword,
+      cargo: this.formCargo || undefined,
+      institucion: this.formInstitucion || undefined,
       horaEntrada: this.formHoraEntrada || undefined,
       horaSalida: this.formHoraSalida || undefined,
       estado: this.formEstado
@@ -251,6 +295,8 @@ export class AsistenciaPage implements OnInit {
         this.formNombre = '';
         this.formCorreo = '';
         this.formPassword = '';
+        this.formCargo = '';
+        this.formInstitucion = '';
         this.formHoraEntrada = '';
         this.formHoraSalida = '';
         this.formEstado = 'activo';
@@ -270,6 +316,8 @@ export class AsistenciaPage implements OnInit {
     this.editNombre = u.nombre;
     this.editCorreo = u.correo;
     this.editPassword = '';
+    this.editCargo = u.cargo || '';
+    this.editInstitucion = u.institucion || '';
     this.editHoraEntrada = u.horaEntrada || '';
     this.editHoraSalida = u.horaSalida || '';
     this.editEstado = u.estado;
@@ -285,6 +333,8 @@ export class AsistenciaPage implements OnInit {
     const data: any = {
       nombre: this.editNombre,
       correo: this.editCorreo,
+      cargo: this.editCargo || '',
+      institucion: this.editInstitucion || '',
       horaEntrada: this.editHoraEntrada || '',
       horaSalida: this.editHoraSalida || '',
       estado: this.editEstado

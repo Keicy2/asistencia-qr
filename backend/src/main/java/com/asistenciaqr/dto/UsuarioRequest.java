@@ -13,6 +13,8 @@ public class UsuarioRequest {
     @NotBlank
     private String password;
 
+    private String cargo;
+    private String institucion;
     private String horaEntrada;
     private String horaSalida;
     private String estado;
@@ -23,6 +25,10 @@ public class UsuarioRequest {
     public void setCorreo(String correo) { this.correo = correo; }
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
+    public String getCargo() { return cargo; }
+    public void setCargo(String cargo) { this.cargo = cargo; }
+    public String getInstitucion() { return institucion; }
+    public void setInstitucion(String institucion) { this.institucion = institucion; }
     public String getHoraEntrada() { return horaEntrada; }
     public void setHoraEntrada(String horaEntrada) { this.horaEntrada = horaEntrada; }
     public String getHoraSalida() { return horaSalida; }

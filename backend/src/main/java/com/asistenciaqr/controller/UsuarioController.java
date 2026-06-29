@@ -51,11 +51,13 @@ public class UsuarioController {
         usuario.setNombre(request.getNombre());
         usuario.setCorreo(request.getCorreo());
         usuario.setPassword(passwordEncoder.encode(request.getPassword()));
+        usuario.setCargo(request.getCargo());
+        usuario.setInstitucion(request.getInstitucion());
         if (request.getHoraEntrada() != null && !request.getHoraEntrada().isBlank()) {
-            usuario.setHoraEntrada(LocalTime.parse(request.getHoraEntrada(), DateTimeFormatter.ofPattern("HH:mm")));
+            usuario.setHoraEntrada(LocalTime.parse(request.getHoraEntrada(), DateTimeFormatter.ofPattern("HH:mm[:ss]")));
         }
         if (request.getHoraSalida() != null && !request.getHoraSalida().isBlank()) {
-            usuario.setHoraSalida(LocalTime.parse(request.getHoraSalida(), DateTimeFormatter.ofPattern("HH:mm")));
+            usuario.setHoraSalida(LocalTime.parse(request.getHoraSalida(), DateTimeFormatter.ofPattern("HH:mm[:ss]")));
         }
         if (request.getEstado() != null && !request.getEstado().isBlank()) {
             usuario.setEstado(request.getEstado());
@@ -86,13 +88,19 @@ public class UsuarioController {
         if (request.getPassword() != null && !request.getPassword().isBlank()) {
             usuario.setPassword(passwordEncoder.encode(request.getPassword()));
         }
+        if (request.getCargo() != null) {
+            usuario.setCargo(request.getCargo().isBlank() ? null : request.getCargo());
+        }
+        if (request.getInstitucion() != null) {
+            usuario.setInstitucion(request.getInstitucion().isBlank() ? null : request.getInstitucion());
+        }
         if (request.getHoraEntrada() != null) {
             usuario.setHoraEntrada(request.getHoraEntrada().isBlank() ? null
-                    : LocalTime.parse(request.getHoraEntrada(), DateTimeFormatter.ofPattern("HH:mm")));
+                    : LocalTime.parse(request.getHoraEntrada(), DateTimeFormatter.ofPattern("HH:mm[:ss]")));
         }
         if (request.getHoraSalida() != null) {
             usuario.setHoraSalida(request.getHoraSalida().isBlank() ? null
-                    : LocalTime.parse(request.getHoraSalida(), DateTimeFormatter.ofPattern("HH:mm")));
+                    : LocalTime.parse(request.getHoraSalida(), DateTimeFormatter.ofPattern("HH:mm[:ss]")));
         }
         if (request.getEstado() != null) {
             usuario.setEstado(request.getEstado().isBlank() ? "activo" : request.getEstado());
@@ -107,6 +115,8 @@ public class UsuarioController {
         r.setId(usuario.getId());
         r.setNombre(usuario.getNombre());
         r.setCorreo(usuario.getCorreo());
+        r.setCargo(usuario.getCargo());
+        r.setInstitucion(usuario.getInstitucion());
         r.setHoraEntrada(usuario.getHoraEntrada());
         r.setHoraSalida(usuario.getHoraSalida());
         r.setEstado(usuario.getEstado());

@@ -86,6 +86,8 @@
               <th>#</th>
               <th>Usuario</th>
               <th>Correo</th>
+              <th>Institución</th>
+              <th>Cargo</th>
               <th>Hora Prog.</th>
               <th>Estado</th>
               <th>Método</th>
@@ -97,6 +99,8 @@
               <td>{{ i + 1 }}</td>
               <td>{{ r.usuarioNombre }}</td>
               <td>{{ r.usuarioCorreo }}</td>
+              <td>{{ r.institucion || '-' }}</td>
+              <td>{{ r.cargo || '-' }}</td>
               <td>{{ r.horaProgramada || '-' }}</td>
               <td><span class="badge estado" [ngClass]="r.estado">{{ r.estado || '-' }}</span></td>
               <td><span class="badge" [class.qr]="r.metodo === 'qr'" [class.manual]="r.metodo === 'manual'">{{ r.metodo }}</span></td>

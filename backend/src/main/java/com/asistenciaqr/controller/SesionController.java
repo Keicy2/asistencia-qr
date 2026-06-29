@@ -12,6 +12,7 @@ import com.asistenciaqr.repository.UsuarioRepository;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -93,6 +94,7 @@ public class SesionController {
     }
 
     @DeleteMapping("/{id}")
+    @Transactional
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         Optional<QrSesion> sesionOpt = qrSesionRepository.findById(id);
         if (sesionOpt.isEmpty()) {

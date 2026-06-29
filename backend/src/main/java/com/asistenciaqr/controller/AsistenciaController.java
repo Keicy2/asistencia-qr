@@ -16,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -76,6 +75,8 @@ public class AsistenciaController {
         registro.setUsuario(usuario);
         registro.setNombre(usuario.getNombre());
         registro.setCorreo(usuario.getCorreo());
+        registro.setInstitucion(usuario.getInstitucion());
+        registro.setCargo(usuario.getCargo());
         registro.setLatitud(request.getLatitud());
         registro.setLongitud(request.getLongitud());
         registro.setHoraProgramada(usuario.getHoraEntrada());
@@ -107,6 +108,8 @@ public class AsistenciaController {
         registro.setUsuario(usuario);
         registro.setNombre(usuario.getNombre());
         registro.setCorreo(usuario.getCorreo());
+        registro.setInstitucion(usuario.getInstitucion());
+        registro.setCargo(usuario.getCargo());
         registro.setHoraProgramada(usuario.getHoraEntrada());
         registro.setEstado(estado);
         registro.setMetodo("manual");
@@ -138,13 +141,17 @@ public class AsistenciaController {
         }
 
         StringBuilder csv = new StringBuilder();
-        csv.append("ID,Usuario,Correo,Hora Programada,Estado,Método,Fecha\n");
+        csv.append('\uFEFF');
+        csv.append("sep=,\n");
+        csv.append("ID,Nombre,Correo,Institución,Cargo,Hora Programada,Estado,Método,Fecha\n");
 
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         for (AsistenciaRegistro r : registros) {
             csv.append(r.getId()).append(",");
             csv.append(escapeCsv(r.getNombre())).append(",");
             csv.append(escapeCsv(r.getCorreo())).append(",");
+            csv.append(escapeCsv(r.getInstitucion())).append(",");
+            csv.append(escapeCsv(r.getCargo())).append(",");
             csv.append(r.getHoraProgramada() != null ? r.getHoraProgramada().toString() : "").append(",");
             csv.append(r.getEstado() != null ? r.getEstado() : "").append(",");
             csv.append(r.getMetodo()).append(",");
@@ -152,10 +159,10 @@ public class AsistenciaController {
         }
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("text/csv"));
+        headers.setContentType(MediaType.parseMediaType("text/csv; charset=UTF-8"));
         headers.setContentDispositionFormData("attachment", "asistencia.csv");
 
-        return ResponseEntity.ok().headers(headers).body(csv.toString().getBytes());
+        return ResponseEntity.ok().headers(headers).body(csv.toString().getBytes(java.nio.charset.StandardCharsets.UTF_8));
     }
 
     private String calcularEstado(Usuario usuario, LocalTime horaActual) {
@@ -187,6 +194,8 @@ public class AsistenciaController {
         }
         r.setUsuarioNombre(registro.getNombre());
         r.setUsuarioCorreo(registro.getCorreo());
+        r.setInstitucion(registro.getInstitucion());
+        r.setCargo(registro.getCargo());
         r.setHoraProgramada(registro.getHoraProgramada());
         r.setEstado(registro.getEstado());
         r.setMetodo(registro.getMetodo());

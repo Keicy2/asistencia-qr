@@ -97,6 +97,8 @@ export class DashboardPage implements OnInit {
 
   selectSesion(sesion: QrSesion) {
     this.selectedSesion = sesion;
+    this.qrData = `https://${this.localIp}:4200/#/asistencia/publica/${sesion.codigo}`;
+    this.showQr = true;
     this.loadRegistros(sesion.id);
   }
 
@@ -160,8 +162,17 @@ export class DashboardPage implements OnInit {
 
   descargarCsv() {
     if (!this.selectedSesion) return;
-    const url = this.asisService.exportarCsv(this.selectedSesion.id);
-    window.open(url, '_blank');
+    this.asisService.exportarCsv(this.selectedSesion.id).subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `asistencia-${this.selectedSesion!.sedeNombre}-${this.selectedSesion!.fecha}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+      },
+      error: () => this.error = 'Error al descargar CSV'
+    });
   }
 
   agregarManual() {

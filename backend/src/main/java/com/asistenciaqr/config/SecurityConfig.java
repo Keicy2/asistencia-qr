@@ -38,12 +38,12 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/sedes/**").permitAll()
                 .requestMatchers("/api/sesiones/publica/**").permitAll()
                 .requestMatchers("/api/asistencia/registrar").permitAll()
                 .requestMatchers("/api/server/**").permitAll()
                 .anyRequest().authenticated()
-            )
-            .httpBasic(Customizer.withDefaults());
+            );
 
         http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 

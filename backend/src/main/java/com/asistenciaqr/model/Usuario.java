@@ -21,6 +21,12 @@ public class Usuario {
     @Column(nullable = false, length = 255)
     private String password;
 
+    @Column(length = 200)
+    private String cargo;
+
+    @Column(length = 300)
+    private String institucion;
+
     @Column(name = "hora_entrada")
     private LocalTime horaEntrada;
 
@@ -52,6 +58,10 @@ public class Usuario {
     public void setCorreo(String correo) { this.correo = correo; }
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
+    public String getCargo() { return cargo; }
+    public void setCargo(String cargo) { this.cargo = cargo; }
+    public String getInstitucion() { return institucion; }
+    public void setInstitucion(String institucion) { this.institucion = institucion; }
     public LocalTime getHoraEntrada() { return horaEntrada; }
     public void setHoraEntrada(LocalTime horaEntrada) { this.horaEntrada = horaEntrada; }
     public LocalTime getHoraSalida() { return horaSalida; }
