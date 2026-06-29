@@ -17,7 +17,11 @@ public class ServerInfoController {
     @GetMapping("/info")
     public ResponseEntity<Map<String, String>> info() {
         String ip = getLocalIp();
-        return ResponseEntity.ok(Map.of("localIp", ip));
+        String serverUrl = "https://" + ip + ":8080";
+        return ResponseEntity.ok(Map.of(
+                "localIp", ip,
+                "serverUrl", serverUrl
+        ));
     }
 
     private String getLocalIp() {

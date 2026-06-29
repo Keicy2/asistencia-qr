@@ -34,6 +34,13 @@ Thumbs.db
 *.pem
 *.cert
 *.key
+*.p12
+
+# H2 Database
+data/
+
+# Backend static (copied from Angular build)
+backend/src/main/resources/static/
 
 # Ionic
 www/

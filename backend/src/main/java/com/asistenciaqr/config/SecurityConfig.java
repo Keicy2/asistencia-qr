@@ -38,6 +38,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/", "/index.html", "/*.js", "/*.css", "/*.ico", "/*.png", "/*.svg", "/*.woff2", "/*.woff", "/*.ttf", "/assets/**", "/3rdpartylicenses.txt").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/sedes/**").permitAll()
                 .requestMatchers("/api/sesiones/publica/**").permitAll()
                 .requestMatchers("/api/asistencia/registrar").permitAll()

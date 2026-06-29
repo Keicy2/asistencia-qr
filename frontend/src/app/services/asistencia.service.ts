@@ -55,8 +55,8 @@ export class AsistenciaService {
     });
   }
 
-  getServerInfo(): Observable<{ localIp: string }> {
-    return this.api.get<{ localIp: string }>('/api/server/info');
+  getServerInfo(): Observable<{ localIp: string; serverUrl: string }> {
+    return this.api.get<{ localIp: string; serverUrl: string }>('/api/server/info');
   }
 
   getUsuarios(): Observable<Usuario[]> {
