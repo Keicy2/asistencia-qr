@@ -97,6 +97,7 @@ const INSTITUCIONES = [
                   <th>#</th>
                   <th>Nombre</th>
                   <th>Correo</th>
+                  <th>Usuario</th>
                   <th>Cargo</th>
                   <th>Institución</th>
                   <th>Hora entrada</th>
@@ -110,6 +111,7 @@ const INSTITUCIONES = [
                   <td>{{ i + 1 }}</td>
                   <td>{{ u.nombre }}</td>
                   <td>{{ u.correo }}</td>
+                  <td><code>{{ u.username }}</code></td>
                   <td>{{ u.cargo || '-' }}</td>
                   <td>{{ u.institucion || '-' }}</td>
                   <td>{{ u.horaEntrada || '-' }}</td>
@@ -130,7 +132,7 @@ const INSTITUCIONES = [
             </div>
           </div>
 
-          <div class="card" *ngIf="editUser">
+            <div class="card" *ngIf="editUser">
             <h3>Editar: {{ editUser.nombre }}</h3>
             <div class="form-row">
               <div class="form-group">
@@ -142,8 +144,18 @@ const INSTITUCIONES = [
                 <input type="email" [(ngModel)]="editCorreo" class="form-control" />
               </div>
               <div class="form-group">
+                <label>Usuario (se genera automáticamente)</label>
+                <input type="text" [value]="editUser.username" class="form-control" readonly />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
                 <label>Nueva contraseña (dejar vacío para no cambiar)</label>
                 <input type="password" [(ngModel)]="editPassword" class="form-control" />
+              </div>
+              <div class="form-group">
+              </div>
+              <div class="form-group">
               </div>
             </div>
             <div class="form-row">

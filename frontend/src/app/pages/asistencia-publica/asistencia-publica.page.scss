@@ -135,3 +135,27 @@
   color: #856404;
   margin-bottom: 12px;
 }
+
+.icon-warning {
+  font-size: 64px;
+  color: #f4a100;
+}
+
+.exit-prompt-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.btn-exit {
+  margin-top: 16px;
+  --background: #e63946;
+}
+
+.exit-time {
+  font-size: 16px;
+  color: #155724;
+  font-weight: 600;
+  margin: 12px 0;
+}

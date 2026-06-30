@@ -2,6 +2,7 @@ export interface Usuario {
   id: number;
   nombre: string;
   correo: string;
+  username: string;
   cargo: string | null;
   institucion: string | null;
   horaEntrada: string | null;
@@ -44,6 +45,7 @@ export interface AsistenciaRegistro {
   estado: string;
   metodo: string;
   registradoEn: string;
+  salidaEn: string | null;
 }
 
 export interface LoginResponse {
@@ -63,10 +65,15 @@ export interface UserInfo {
 
 export interface RegistroPayload {
   codigo: string;
-  correo: string;
+  username: string;
   password: string;
   latitud: number | null;
   longitud: number | null;
+}
+
+export interface VerificarRegistroResponse {
+  tieneRegistro: boolean;
+  registro?: AsistenciaRegistro;
 }
 
 export interface ManualRegistroPayload {

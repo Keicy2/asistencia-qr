@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -43,29 +44,14 @@ public class AsistenciaController {
 
     @PostMapping("/registrar")
     public ResponseEntity<?> registrar(@Valid @RequestBody RegistroRequest request) {
-        Optional<QrSesion> sesionOpt = qrSesionRepository.findByCodigo(request.getCodigo());
-        if (sesionOpt.isEmpty()) {
-            return ResponseEntity.badRequest().body("Sesión no encontrada");
-        }
+        ResponseEntity<?> error = validarSesion(request);
+        if (error != null) return error;
 
-        QrSesion sesion = sesionOpt.get();
-        if (!sesion.getActiva() || (sesion.getExpiraEn() != null && sesion.getExpiraEn().isBefore(LocalDateTime.now()))) {
-            return ResponseEntity.status(410).body("Esta sesión ha expirado");
-        }
+        ResponseEntity<?> authError = validarAuth(request);
+        if (authError != null) return authError;
 
-        Optional<Usuario> usuarioOpt = usuarioRepository.findByCorreo(request.getCorreo());
-        if (usuarioOpt.isEmpty()) {
-            return ResponseEntity.status(401).body("Credenciales incorrectas");
-        }
-
-        Usuario usuario = usuarioOpt.get();
-        if (!passwordEncoder.matches(request.getPassword(), usuario.getPassword())) {
-            return ResponseEntity.status(401).body("Credenciales incorrectas");
-        }
-
-        if (Boolean.TRUE.equals(usuario.getBloqueado()) || Boolean.FALSE.equals(usuario.getActivo())) {
-            return ResponseEntity.status(403).body("Cuenta bloqueada o inactiva");
-        }
+        QrSesion sesion = qrSesionRepository.findByCodigo(request.getCodigo()).get();
+        Usuario usuario = usuarioRepository.findByUsername(request.getUsername()).get();
 
         LocalTime horaRegistro = LocalTime.now();
         String estado = calcularEstado(usuario, horaRegistro);
@@ -143,7 +129,7 @@ public class AsistenciaController {
         StringBuilder csv = new StringBuilder();
         csv.append('\uFEFF');
         csv.append("sep=,\n");
-        csv.append("ID,Nombre,Correo,Institución,Cargo,Hora Programada,Estado,Método,Fecha\n");
+        csv.append("ID,Nombre,Correo,Institución,Cargo,Hora Programada,Estado,Método,Fecha,Salida\n");
 
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         for (AsistenciaRegistro r : registros) {
@@ -155,7 +141,8 @@ public class AsistenciaController {
             csv.append(r.getHoraProgramada() != null ? r.getHoraProgramada().toString() : "").append(",");
             csv.append(r.getEstado() != null ? r.getEstado() : "").append(",");
             csv.append(r.getMetodo()).append(",");
-            csv.append(r.getRegistradoEn().format(fmt)).append("\n");
+            csv.append(r.getRegistradoEn().format(fmt)).append(",");
+            csv.append(r.getSalidaEn() != null ? r.getSalidaEn().format(fmt) : "").append("\n");
         }
 
         HttpHeaders headers = new HttpHeaders();
@@ -176,6 +163,88 @@ public class AsistenciaController {
             return "a_tiempo";
         }
         return "tarde";
+    }
+
+    @PostMapping("/verificar")
+    public ResponseEntity<?> verificar(@Valid @RequestBody RegistroRequest request) {
+        ResponseEntity<?> error = validarSesion(request);
+        if (error != null) return error;
+
+        ResponseEntity<?> authError = validarAuth(request);
+        if (authError != null) return authError;
+
+        QrSesion sesion = qrSesionRepository.findByCodigo(request.getCodigo()).get();
+        Usuario usuario = usuarioRepository.findByUsername(request.getUsername()).get();
+
+        Optional<AsistenciaRegistro> existing = registroRepository
+                .findTopBySesionCodigoAndUsuarioUsernameOrderByRegistradoEnDesc(sesion.getCodigo(), usuario.getUsername());
+
+        if (existing.isEmpty() || existing.get().getSalidaEn() != null) {
+            return ResponseEntity.ok(Map.of("tieneRegistro", false));
+        }
+
+        RegistroResponse response = toResponse(existing.get());
+        return ResponseEntity.ok(Map.of("tieneRegistro", true, "registro", response));
+    }
+
+    @PostMapping("/registrar-salida")
+    public ResponseEntity<?> registrarSalida(@Valid @RequestBody RegistroRequest request) {
+        ResponseEntity<?> error = validarSesion(request);
+        if (error != null) return error;
+
+        ResponseEntity<?> authError = validarAuth(request);
+        if (authError != null) return authError;
+
+        QrSesion sesion = qrSesionRepository.findByCodigo(request.getCodigo()).get();
+        Usuario usuario = usuarioRepository.findByUsername(request.getUsername()).get();
+
+        Optional<AsistenciaRegistro> existing = registroRepository
+                .findTopBySesionCodigoAndUsuarioUsernameOrderByRegistradoEnDesc(sesion.getCodigo(), usuario.getUsername());
+
+        if (existing.isEmpty()) {
+            return ResponseEntity.badRequest().body("No se encontró registro de entrada");
+        }
+
+        AsistenciaRegistro registro = existing.get();
+        if (registro.getSalidaEn() != null) {
+            return ResponseEntity.badRequest().body("La salida ya fue registrada");
+        }
+
+        registro.setSalidaEn(LocalDateTime.now());
+        AsistenciaRegistro saved = registroRepository.save(registro);
+        return ResponseEntity.ok(toResponse(saved));
+    }
+
+    private ResponseEntity<?> validarSesion(RegistroRequest request) {
+        Optional<QrSesion> sesionOpt = qrSesionRepository.findByCodigo(request.getCodigo());
+        if (sesionOpt.isEmpty()) {
+            return ResponseEntity.badRequest().body("Sesión no encontrada");
+        }
+
+        QrSesion sesion = sesionOpt.get();
+        if (!sesion.getActiva() || (sesion.getExpiraEn() != null && sesion.getExpiraEn().isBefore(LocalDateTime.now()))) {
+            return ResponseEntity.status(410).body("Esta sesión ha expirado");
+        }
+
+        return null;
+    }
+
+    private ResponseEntity<?> validarAuth(RegistroRequest request) {
+        Optional<Usuario> usuarioOpt = usuarioRepository.findByUsername(request.getUsername());
+        if (usuarioOpt.isEmpty()) {
+            return ResponseEntity.status(401).body("Credenciales incorrectas");
+        }
+
+        Usuario usuario = usuarioOpt.get();
+        if (!passwordEncoder.matches(request.getPassword(), usuario.getPassword())) {
+            return ResponseEntity.status(401).body("Credenciales incorrectas");
+        }
+
+        if (Boolean.TRUE.equals(usuario.getBloqueado()) || Boolean.FALSE.equals(usuario.getActivo())) {
+            return ResponseEntity.status(403).body("Cuenta bloqueada o inactiva");
+        }
+
+        return null;
     }
 
     private String escapeCsv(String value) {
@@ -200,6 +269,7 @@ public class AsistenciaController {
         r.setEstado(registro.getEstado());
         r.setMetodo(registro.getMetodo());
         r.setRegistradoEn(registro.getRegistradoEn());
+        r.setSalidaEn(registro.getSalidaEn());
         return r;
     }
 }

@@ -51,6 +51,9 @@ public class AsistenciaRegistro {
     @Column(name = "registrado_en", nullable = false, updatable = false)
     private LocalDateTime registradoEn = LocalDateTime.now();
 
+    @Column(name = "salida_en")
+    private LocalDateTime salidaEn;
+
     public AsistenciaRegistro() {}
 
     public Long getId() { return id; }
@@ -81,4 +84,6 @@ public class AsistenciaRegistro {
     public void setMetodo(String metodo) { this.metodo = metodo; }
     public LocalDateTime getRegistradoEn() { return registradoEn; }
     public void setRegistradoEn(LocalDateTime registradoEn) { this.registradoEn = registradoEn; }
+    public LocalDateTime getSalidaEn() { return salidaEn; }
+    public void setSalidaEn(LocalDateTime salidaEn) { this.salidaEn = salidaEn; }
 }

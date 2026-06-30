@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ApiService } from './api.service';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { Sede, QrSesion, AsistenciaRegistro, RegistroPayload, ManualRegistroPayload, Usuario, UsuarioPayload } from '../models/asistencia.models';
+import { Sede, QrSesion, AsistenciaRegistro, RegistroPayload, ManualRegistroPayload, Usuario, UsuarioPayload, VerificarRegistroResponse } from '../models/asistencia.models';
 
 @Injectable({ providedIn: 'root' })
 export class AsistenciaService {
@@ -32,6 +32,14 @@ export class AsistenciaService {
 
   registrar(data: RegistroPayload): Observable<AsistenciaRegistro> {
     return this.api.post<AsistenciaRegistro>('/api/asistencia/registrar', data);
+  }
+
+  verificarRegistro(data: RegistroPayload): Observable<VerificarRegistroResponse> {
+    return this.api.post<VerificarRegistroResponse>('/api/asistencia/verificar', data);
+  }
+
+  registrarSalida(data: RegistroPayload): Observable<AsistenciaRegistro> {
+    return this.api.post<AsistenciaRegistro>('/api/asistencia/registrar-salida', data);
   }
 
   listarRegistros(sesionId?: number): Observable<AsistenciaRegistro[]> {

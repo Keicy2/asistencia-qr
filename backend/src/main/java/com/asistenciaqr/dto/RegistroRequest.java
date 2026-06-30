@@ -8,7 +8,7 @@ public class RegistroRequest {
     private String codigo;
 
     @NotBlank
-    private String correo;
+    private String username;
 
     @NotBlank
     private String password;
@@ -18,8 +18,8 @@ public class RegistroRequest {
 
     public String getCodigo() { return codigo; }
     public void setCodigo(String codigo) { this.codigo = codigo; }
-    public String getCorreo() { return correo; }
-    public void setCorreo(String correo) { this.correo = correo; }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
     public Double getLatitud() { return latitud; }

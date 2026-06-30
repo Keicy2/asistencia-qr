@@ -43,7 +43,7 @@ public class SecurityConfig {
                 .requestMatchers(AntPathRequestMatcher.antMatcher("/assets/**")).permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/sedes/**").permitAll()
                 .requestMatchers("/api/sesiones/publica/**").permitAll()
-                .requestMatchers("/api/asistencia/registrar").permitAll()
+                .requestMatchers("/api/asistencia/registrar", "/api/asistencia/verificar", "/api/asistencia/registrar-salida").permitAll()
                 .requestMatchers("/api/server/**").permitAll()
                 .anyRequest().authenticated()
             );

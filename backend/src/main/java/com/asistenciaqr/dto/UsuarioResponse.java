@@ -8,6 +8,7 @@ public class UsuarioResponse {
     private Long id;
     private String nombre;
     private String correo;
+    private String username;
     private String cargo;
     private String institucion;
     private LocalTime horaEntrada;
@@ -22,6 +23,8 @@ public class UsuarioResponse {
     public void setNombre(String nombre) { this.nombre = nombre; }
     public String getCorreo() { return correo; }
     public void setCorreo(String correo) { this.correo = correo; }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
     public String getCargo() { return cargo; }
     public void setCargo(String cargo) { this.cargo = cargo; }
     public String getInstitucion() { return institucion; }

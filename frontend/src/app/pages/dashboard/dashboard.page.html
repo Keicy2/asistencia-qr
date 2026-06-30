@@ -92,6 +92,7 @@
               <th>Estado</th>
               <th>Método</th>
               <th>Registrado</th>
+              <th>Salida</th>
             </tr>
           </thead>
           <tbody>
@@ -105,6 +106,7 @@
               <td><span class="badge estado" [ngClass]="r.estado">{{ r.estado || '-' }}</span></td>
               <td><span class="badge" [class.qr]="r.metodo === 'qr'" [class.manual]="r.metodo === 'manual'">{{ r.metodo }}</span></td>
               <td>{{ r.registradoEn | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td>{{ r.salidaEn ? (r.salidaEn | date:'dd/MM/yyyy HH:mm') : '-' }}</td>
             </tr>
           </tbody>
         </table>

@@ -15,6 +15,7 @@ public class RegistroResponse {
     private LocalTime horaProgramada;
     private String estado;
     private LocalDateTime registradoEn;
+    private LocalDateTime salidaEn;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -36,4 +37,6 @@ public class RegistroResponse {
     public void setEstado(String estado) { this.estado = estado; }
     public LocalDateTime getRegistradoEn() { return registradoEn; }
     public void setRegistradoEn(LocalDateTime registradoEn) { this.registradoEn = registradoEn; }
+    public LocalDateTime getSalidaEn() { return salidaEn; }
+    public void setSalidaEn(LocalDateTime salidaEn) { this.salidaEn = salidaEn; }
 }

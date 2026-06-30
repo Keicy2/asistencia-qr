@@ -18,6 +18,9 @@ public class Usuario {
     @Column(nullable = false, length = 150, unique = true)
     private String correo;
 
+    @Column(nullable = false, length = 100, unique = true)
+    private String username;
+
     @Column(nullable = false, length = 255)
     private String password;
 
@@ -56,6 +59,8 @@ public class Usuario {
     public void setNombre(String nombre) { this.nombre = nombre; }
     public String getCorreo() { return correo; }
     public void setCorreo(String correo) { this.correo = correo; }
+    public String getUsername() { return username; }
+    public void setUsername(String username) { this.username = username; }
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
     public String getCargo() { return cargo; }

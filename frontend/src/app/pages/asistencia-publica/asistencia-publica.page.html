@@ -5,17 +5,40 @@
       <p>Cargando sesión...</p>
     </div>
 
-    <div *ngIf="error && !loading" class="center">
+    <div *ngIf="error && !loading && !registrado && !exitoSalida" class="center">
       <ion-icon name="close-circle-outline" class="icon-error"></ion-icon>
       <h2>{{ error }}</h2>
+      <ion-button fill="outline" size="small" (click)="reiniciar()" *ngIf="error !== 'Sesión no encontrada' && error !== 'Esta sesión ha expirado'">Reintentar</ion-button>
     </div>
 
-    <div *ngIf="registrado" class="center">
+    <div *ngIf="exitoSalida" class="center">
+      <ion-icon name="checkmark-circle-outline" class="icon-success"></ion-icon>
+      <h2>Salida registrada exitosamente</h2>
+      <p class="exit-time" *ngIf="salidaEn">Hora de salida: {{ salidaEn | date:'dd/MM/yyyy HH:mm' }}</p>
+      <ion-button fill="outline" size="small" (click)="reiniciar()">Registrar otra persona</ion-button>
+    </div>
+
+    <div *ngIf="registrado && !exitoSalida" class="center">
       <ion-icon name="checkmark-circle-outline" class="icon-success"></ion-icon>
       <h2>{{ successMsg }}</h2>
+      <ion-button expand="block" (click)="registrarSalida()" [disabled]="registrando" class="btn-exit">
+        {{ registrando ? 'Registrando...' : 'Registrar salida' }}
+      </ion-button>
     </div>
 
-    <div *ngIf="sesion && !loading && !registrado">
+    <div *ngIf="showExitPrompt" class="center">
+      <ion-icon name="warning" class="icon-warning"></ion-icon>
+      <h2>Ya tiene un registro activo</h2>
+      <p>¿Desea registrar su salida?</p>
+      <div class="exit-prompt-actions">
+        <ion-button (click)="registrarSalida()" [disabled]="registrando">
+          {{ registrando ? 'Registrando...' : 'Sí, registrar salida' }}
+        </ion-button>
+        <ion-button fill="outline" (click)="cancelarSalida()">Cancelar</ion-button>
+      </div>
+    </div>
+
+    <div *ngIf="sesion && !loading && !registrado && !exitoSalida && !showExitPrompt">
       <div class="header">
         <h1>Registro de Asistencia</h1>
         <p class="sede-name">{{ sesion.sedeNombre }}</p>
@@ -56,7 +79,7 @@
 
       <div class="form" *ngIf="gpsStatus === 'dentro' || gpsStatus === 'denegado' || gpsStatus === 'no_disponible'">
         <div class="form-group">
-          <input type="email" [(ngModel)]="correo" placeholder="Correo electrónico" class="form-control" />
+          <input type="text" [(ngModel)]="username" placeholder="Nombre de usuario" class="form-control" />
         </div>
         <div class="form-group">
           <input type="password" [(ngModel)]="password" placeholder="Contraseña" class="form-control" />
@@ -64,8 +87,8 @@
 
         <div *ngIf="error" class="error-msg">{{ error }}</div>
 
-        <ion-button expand="block" (click)="registrar()" [disabled]="registrando || !correo || !password">
-          {{ registrando ? 'Registrando...' : 'Confirmar asistencia' }}
+        <ion-button expand="block" (click)="confirmarAsistencia()" [disabled]="registrando || !username || !password">
+          {{ registrando ? 'Procesando...' : 'Confirmar asistencia' }}
         </ion-button>
       </div>
     </div>

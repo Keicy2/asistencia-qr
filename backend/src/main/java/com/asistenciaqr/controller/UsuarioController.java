@@ -50,6 +50,7 @@ public class UsuarioController {
         Usuario usuario = new Usuario();
         usuario.setNombre(request.getNombre());
         usuario.setCorreo(request.getCorreo());
+        usuario.setUsername(generarUsername(request));
         usuario.setPassword(passwordEncoder.encode(request.getPassword()));
         usuario.setCargo(request.getCargo());
         usuario.setInstitucion(request.getInstitucion());
@@ -84,6 +85,7 @@ public class UsuarioController {
                 return ResponseEntity.badRequest().body("El correo ya está en uso");
             }
             usuario.setCorreo(request.getCorreo());
+            usuario.setUsername(generarUsername(request));
         }
         if (request.getPassword() != null && !request.getPassword().isBlank()) {
             usuario.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -110,11 +112,17 @@ public class UsuarioController {
         return ResponseEntity.ok(toResponse(saved));
     }
 
+    private String generarUsername(UsuarioRequest request) {
+        String base = request.getCorreo().substring(0, request.getCorreo().indexOf('@'));
+        return base.toLowerCase();
+    }
+
     private UsuarioResponse toResponse(Usuario usuario) {
         UsuarioResponse r = new UsuarioResponse();
         r.setId(usuario.getId());
         r.setNombre(usuario.getNombre());
         r.setCorreo(usuario.getCorreo());
+        r.setUsername(usuario.getUsername());
         r.setCargo(usuario.getCargo());
         r.setInstitucion(usuario.getInstitucion());
         r.setHoraEntrada(usuario.getHoraEntrada());
