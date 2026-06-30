@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -38,7 +39,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/", "/index.html", "/*.js", "/*.css", "/*.ico", "/*.png", "/*.svg", "/*.woff2", "/*.woff", "/*.ttf", "/assets/**", "/3rdpartylicenses.txt").permitAll()
+                .requestMatchers("/", "/index.html", "/*.js", "/*.css", "/*.ico", "/*.png", "/*.svg", "/*.woff2", "/*.woff", "/*.ttf", "/3rdpartylicenses.txt").permitAll()
+                .requestMatchers(AntPathRequestMatcher.antMatcher("/assets/**")).permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/sedes/**").permitAll()
                 .requestMatchers("/api/sesiones/publica/**").permitAll()
                 .requestMatchers("/api/asistencia/registrar").permitAll()
