@@ -9,6 +9,14 @@
 @import '@ionic/angular/css/text-transformation.css';
 @import '@ionic/angular/css/flex-utils.css';
 
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('/assets/fonts/Inter.woff2') format('woff2');
+}
+
 * {
   font-family: 'Inter', sans-serif;
 }

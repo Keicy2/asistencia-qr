@@ -59,18 +59,16 @@ for /f "tokens=2 delims=:" %%a in ('ipconfig ^| findstr /C:"IPv4" /C:"Direcci.n 
     set "ip=%%a"
     set "ip=!ip: =!"
     if not "!ip!"=="" (
-        echo   https://!ip!:8443  (administracion)
-        echo   https://!ip!:8080  (puerto Safari - codigos QR)
+        echo   https://!ip!:8443
         echo.
-        echo Los codigos QR apuntan a https://...:8080 para Safari/iOS.
+        echo Los codigos QR apuntan a https://...:8443.
         echo Para detener el servidor, cierre la ventana que se abrio.
         goto :done
     )
 )
-echo   https://localhost:8443  (administracion)
-echo   https://localhost:8080  (puerto Safari - codigos QR)
+echo   https://localhost:8443
 echo.
-echo Los codigos QR apuntan a https://...:8080 para compatibilidad con Safari/iOS.
+echo Los codigos QR apuntan a https://...:8443.
 goto :done
 
 :notfound

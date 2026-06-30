@@ -60,13 +60,28 @@ export class DashboardPage implements OnInit {
     this.asisService.getServerInfo().subscribe({
       next: (info) => {
         this.localIp = info.localIp;
-        this.serverUrl = info.serverUrl || `https://${info.localIp}:8080`;
+        this.serverUrl = info.serverUrl || `https://${info.localIp}:8443`;
+        if (this.selectedSesion) {
+          this.qrData = this.buildQrUrl(this.selectedSesion.codigo);
+        }
       },
       error: () => {
         this.localIp = '127.0.0.1';
-        this.serverUrl = 'https://127.0.0.1:8080';
+        this.serverUrl = 'https://127.0.0.1:8443';
       }
     });
+  }
+
+  private buildQrUrl(codigo: string): string {
+    let base = this.serverUrl ? this.serverUrl : `https://${this.localIp}:8443`;
+    base = base.replace(/^http:/i, 'https:');
+    if (!base.startsWith('https://')) {
+      base = `https://${base}`;
+    }
+    if (base.endsWith('/')) {
+      base = base.slice(0, -1);
+    }
+    return `${base}/#/asistencia/publica/${codigo}`;
   }
 
   private loadUser() {
@@ -104,7 +119,7 @@ export class DashboardPage implements OnInit {
 
   selectSesion(sesion: QrSesion) {
     this.selectedSesion = sesion;
-    this.qrData = `${this.serverUrl}/#/asistencia/publica/${sesion.codigo}`;
+    this.qrData = this.buildQrUrl(sesion.codigo);
     this.showQr = true;
     this.loadRegistros(sesion.id);
   }
@@ -131,7 +146,7 @@ export class DashboardPage implements OnInit {
       fecha: this.fecha
     }).subscribe({
       next: (sesion) => {
-        this.qrData = `${this.serverUrl}/#/asistencia/publica/${sesion.codigo}`;
+        this.qrData = this.buildQrUrl(sesion.codigo);
         this.showQr = true;
         this.success = 'Código QR generado exitosamente';
         this.loading = false;
